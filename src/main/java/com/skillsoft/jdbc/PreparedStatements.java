@@ -18,16 +18,26 @@ public class PreparedStatements {
 
         try (Connection con = DriverManager.getConnection(dbURL, username, password)) {
 
-            query = "SELECT  emp_id, emp_name, designation FROM employee_data WHERE emp_id = ?";
+            Statement stmt = con.createStatement();
+
+            query = "INSERT INTO employee_data(emp_id,emp_name,designation,salary) values (?,?,?,?)";
+
             PreparedStatement ps = con.prepareStatement(query);
 
-            ps.setInt(1, 103);
+            ps.setInt(1, 105);
+            ps.setString(2, "Ryan");
+            ps.setString(3, "Project Manager");
+            ps.setDouble(4, 100000);
+
+            ps.executeUpdate();
+
             System.out.println("Contents of the table");
 
-            ResultSet rs = ps.executeQuery();
+            query = "SELECT * FROM employee_data order by emp_name";
+            ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
-                System.out.print(rs.getString("emp_name") + "\t" + rs.getString("designation") + "\n");
+                System.out.print(rs.getString("emp_id") + "\t" +rs.getString("emp_name") + "\t" + rs.getString("designation") + "\n");
             }
 
             System.out.println("Query executed successfully! Result is: " + rs);
