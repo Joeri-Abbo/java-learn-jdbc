@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 
 public class BasicDataBaseOperations {
 
-    public static String dbURL = "jdbc:mysql://localhost:3306/SampleDB";
+    public static String dbURL = "jdbc:mysql://localhost:3306/";
     public static String username = "mysql";
     public static String password = "mysql";
 
@@ -20,21 +20,11 @@ public class BasicDataBaseOperations {
 
             Statement stmt = con.createStatement();
 
-            query = "DELETE FROM users WHERE phone_number IS NULL ";
-            int result = stmt.executeUpdate(query);
+            query = "CREATE database SampleDB";
 
-            System.out.println("Query executed successfully! Number of deleted rows: " + result);
+            boolean result = stmt.execute(query);
 
-
-            query = "SELECT * FROM users";
-
-            ResultSet rs = stmt.executeQuery(query);
-
-            while (rs.next()){
-                System.out.print(rs.getString("first_name"));
-                System.out.print("\t"+rs.getString("last_name"));
-                System.out.println();
-            }
+            System.out.println("Query executed successfully! Result is: " + result);
         } catch (SQLException e) {
             e.printStackTrace();
         }
