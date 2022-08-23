@@ -20,16 +20,10 @@ public class BasicDataBaseOperations {
 
             Statement stmt = con.createStatement();
 
-            query = "SELECT `users`.first_name, `users`.last_name FROM users";
-            ResultSet rs = stmt.executeQuery(query);
+            query = "INSERT INTO users (first_name, last_name, email) VALUES ('Julio', 'Chavez', 'chavezj317@gmail.com'), ('Zack', 'Harken', 'Zack_Harken@hotmail.com')";
+            int result = stmt.executeUpdate(query);
 
-            while (rs.next()) {
-                System.out.print(rs.getString("first_name"));
-                System.out.print("\t" + rs.getString("last_name"));
-                System.out.println();
-            }
-
-            System.out.println("Query executed successfully...");
+            System.out.println("Query executed successfully! Returned value is: " + result);
         } catch (SQLException e) {
             e.printStackTrace();
         }
