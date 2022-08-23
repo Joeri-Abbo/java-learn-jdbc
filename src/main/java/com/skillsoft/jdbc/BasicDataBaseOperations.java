@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.ResultSet;
 
 public class BasicDataBaseOperations {
 
@@ -19,8 +20,14 @@ public class BasicDataBaseOperations {
 
             Statement stmt = con.createStatement();
 
-            query = "CREATE TABLE users (first_name VARCHAR(50), last_name VARCHAR(50), email VARCHAR(50), phone_number VARCHAR(50))";
-            stmt.execute(query);
+            query = "SELECT `users`.first_name, `users`.last_name FROM users";
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                System.out.print(rs.getString("first_name"));
+                System.out.print("\t" + rs.getString("last_name"));
+                System.out.println();
+            }
 
             System.out.println("Query executed successfully...");
         } catch (SQLException e) {
