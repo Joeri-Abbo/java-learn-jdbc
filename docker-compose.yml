@@ -3,7 +3,7 @@ services:
   db:
     image: mariadb:10.5
     environment:
-      - MYSQL_DATABASE=api
+      - MYSQL_DATABASE=SampleDB
       - MYSQL_USER=mysql
       - MYSQL_PASSWORD=mysql
       - MYSQL_ROOT_PASSWORD=mysql
