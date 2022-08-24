@@ -23,21 +23,23 @@ public class ResultSetFeatures {
         String query = null;
 
         try (Connection con = DriverManager.getConnection(dbURL, username, password)) {
-            Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
+            con.setAutoCommit(false);
             query = "SELECT * FROM employee_data";
 
             ResultSet rs = stmt.executeQuery(query);
 
-            rs.next();
-            displayEmpData("next()", rs);
+            while (rs.next()) {
+                if (rs.getString("designation").equals("Java Developer")) {
+                    rs.updateDouble("salary", rs.getDouble("salary") + 5000);
+                    rs.updateRow();
 
-            Thread.sleep(120000);
-            rs.last();
-            rs.refreshRow();
-            displayEmpData("last()", rs);
+                    displayEmpData("updated", rs);
+                }
+            }
 
-        } catch (SQLException | InterruptedException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
