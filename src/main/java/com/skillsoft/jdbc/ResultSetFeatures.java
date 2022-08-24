@@ -30,15 +30,30 @@ public class ResultSetFeatures {
 
             ResultSet rs = stmt.executeQuery(query);
 
+            int javaDevCount = 0;
+            int empCount = 0;
             while (rs.next()) {
-                if (rs.getString("designation").equals("Java Developer")) {
-                    rs.updateDouble("salary", rs.getDouble("salary") + 5000);
-                    rs.updateRow();
+                empCount = Math.max(rs.getInt("emp_id"), empCount);
 
-                    displayEmpData("updated", rs);
+                if (rs.getString("designation").equalsIgnoreCase("Java Developer")) {
+                    javaDevCount++;
                 }
             }
 
+            if (javaDevCount == 0) {
+                rs.moveToInsertRow();
+
+                rs.updateInt(1, ++empCount);
+                rs.updateString(2, "Alan");
+                rs.updateString(3, "Java Developer");
+                rs.updateString(4, "95000");
+
+                rs.insertRow();
+                rs.last();
+
+                displayEmpData("added:", rs);
+            }
+            con.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
