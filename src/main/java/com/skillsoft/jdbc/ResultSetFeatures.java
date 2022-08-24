@@ -23,7 +23,7 @@ public class ResultSetFeatures {
         String query = null;
 
         try (Connection con = DriverManager.getConnection(dbURL, username, password)) {
-            Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             query = "SELECT * FROM employee_data";
 
