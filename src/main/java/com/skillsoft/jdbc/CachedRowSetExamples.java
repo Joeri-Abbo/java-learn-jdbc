@@ -6,66 +6,32 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.RowSet;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Statement;
+import java.sql.ResultSet;
 
 public class CachedRowSetExamples {
     public static String dbURL = "jdbc:mysql://localhost:3306/SampleDB";
     public static String username = "mysql";
     public static String password = "mysql";
 
-    private static void displayProductData(String label, RowSet result) throws SQLException {
-        int id = result.getInt("product_id");
-        String name = result.getString("product_name");
-        Double price = result.getDouble("price");
-        String prodData = "%s: %d | %s | %.2f \n\n";
-        System.out.format(prodData, label, id, name, price);
-    }
-
     public static void main(String[] args) throws SQLException {
 
         try (Connection con = DriverManager.getConnection(dbURL, username, password)) {
-            con.setAutoCommit(false);
 
             CachedRowSet cachedRs = RowSetProvider.newFactory().createCachedRowSet();
-            cachedRs.setCommand("SELECT * FROM Products");
-            cachedRs.execute(con);
 
-//            while (cachedRs.next()) {
-//                if (cachedRs.getString("product_name").endsWith("Cable")) {
-//
-//                    displayProductData("Deleting: ", cachedRs);
-//                    cachedRs.deleteRow();
-//                }
-//            }
+            Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
-            System.out.println("-----Inserting Rows-----\n");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Products");
 
-            int cableCount = 0;
-            int prodCount = 0;
+            cachedRs.populate(rs);
+            con.close();
 
             while (cachedRs.next()) {
-                prodCount = Math.max(cachedRs.getInt("product_id"), prodCount);
-
-                if (cachedRs.getString("product_name").endsWith("Cable")) {
-                    cableCount++;
-                }
+                System.out.print("ID: " + cachedRs.getInt("product_id") + "\t");
+                System.out.print("Product name: " + cachedRs.getString("product_name") + "\t");
+                System.out.print("Price: " + cachedRs.getDouble("price") + "\n");
             }
-
-            if (cableCount == 0) {
-                System.out.println("There are no cables in store! Adding one...");
-                Thread.sleep(60000);
-                cachedRs.moveToInsertRow();
-                cachedRs.updateInt("product_id", ++prodCount);
-                cachedRs.updateString("product_name", "HDMI Cable");
-                cachedRs.updateDouble("price", 5);
-
-                cachedRs.insertRow();
-                cachedRs.moveToCurrentRow();
-
-                displayProductData("added: ", cachedRs);
-
-            }
-
-            cachedRs.acceptChanges();
             cachedRs.close();
         } catch (Exception e) {
             e.printStackTrace();
