@@ -99,31 +99,37 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/jdbc http://java.sun.com/xml/ns/j
       <columnValue>102</columnValue>
       <columnValue>Mouse</columnValue>
       <columnValue>15</columnValue>
+      <updateRow>17.0</updateRow>
     </currentRow>
-    <currentRow>
+    <deleteRow>
       <columnValue>103</columnValue>
       <columnValue>HDMI Cable</columnValue>
       <columnValue>5</columnValue>
-    </currentRow>
+    </deleteRow>
     <currentRow>
       <columnValue>104</columnValue>
       <columnValue>Keyboard</columnValue>
       <columnValue>12</columnValue>
     </currentRow>
-    <currentRow>
+    <deleteRow>
       <columnValue>105</columnValue>
       <columnValue>USB Cable</columnValue>
       <columnValue>3</columnValue>
-    </currentRow>
-    <currentRow>
+    </deleteRow>
+    <deleteRow>
       <columnValue>106</columnValue>
       <columnValue>VGA Cable</columnValue>
       <columnValue>3</columnValue>
-    </currentRow>
+    </deleteRow>
     <currentRow>
       <columnValue>107</columnValue>
       <columnValue>LCD Monitor</columnValue>
       <columnValue>159</columnValue>
     </currentRow>
+    <insertRow>
+      <columnValue>108</columnValue>
+      <columnValue>Curved LCD Monitor</columnValue>
+      <columnValue>199.0</columnValue>
+    </insertRow>
   </data>
 </webRowSet>

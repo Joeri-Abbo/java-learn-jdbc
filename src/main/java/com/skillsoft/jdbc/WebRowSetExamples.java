@@ -25,7 +25,24 @@ public class WebRowSetExamples {
             webrs.setCommand("SELECT * FROM Products");
             webrs.execute(con);
 
-            System.out.println("Size of the WebRowSet is: " + webrs.size());
+            while (webrs.next()){
+                if (webrs.getString("product_name").endsWith("Cable")){
+                    webrs.deleteRow();
+                }
+
+                if (webrs.getString("product_name").contains("Mouse")){
+                    webrs.updateDouble("Price", webrs.getDouble("price") + 2);
+                    webrs.updateRow();
+                }
+            }
+
+            webrs.moveToInsertRow();
+            webrs.updateInt("product_id", 108);
+            webrs.updateString("product_name", "Curved LCD Monitor");
+            webrs.updateDouble("price", 199);
+
+            webrs.insertRow();
+            webrs.moveToCurrentRow();
 
             String path = "ProductsXML.xml";
 
@@ -37,6 +54,10 @@ public class WebRowSetExamples {
 
             writer.flush();
             writer.close();
+
+            System.out.println("Saving changes to the database...");
+            webrs.acceptChanges();
+
             webrs.close();
 
         } catch (IOException | SQLException e) {
