@@ -19,30 +19,36 @@ public class FilteredRowSetExamples {
 
             filteredRs.setCommand("SELECT * FROM Products");
             filteredRs.execute(con);
-            ProductPriceFilter ppFilter = new ProductPriceFilter(5.0, 15.0, 3);
+            ProductPriceFilter ppFilter = new ProductPriceFilter(0.0, 20.0, 3);
             filteredRs.setFilter(ppFilter);
-
-            filteredRs.moveToInsertRow();
-
-            filteredRs.updateInt("product_id", 108);
-            filteredRs.updateString("product_name", "Curved LCD Monitor");
-            filteredRs.updateDouble("price", 199);
-
-            filteredRs.insertRow();
-            filteredRs.moveToCurrentRow();
-
-            filteredRs.acceptChanges();
             filteredRs.beforeFirst();
 
-            System.out.println("--- Filtered RowSet ---");
+            System.out.println("--- Filtered RowSet BEFORE Deletes ---");
             while (filteredRs.next()) {
                 System.out.print("ID: " + filteredRs.getInt("product_id") + "\t");
                 System.out.print("Product name: " + filteredRs.getString("product_name") + "\t");
                 System.out.print("Price: " + filteredRs.getDouble("price") + "\n");
             }
 
-            filteredRs.commit();
-            filteredRs.close();
+            filteredRs.beforeFirst();
+
+            System.out.println("\n About to delete cables...");
+
+            while (filteredRs.next()) {
+                if (filteredRs.getString("product_name").endsWith("Cable")) {
+                    filteredRs.deleteRow();
+                }
+            }
+
+            filteredRs.beforeFirst();
+            System.out.println("--- Filtered RowSet AFTER Deletes ---");
+            while (filteredRs.next()) {
+                System.out.print("ID: " + filteredRs.getInt("product_id") + "\t");
+                System.out.print("Product name: " + filteredRs.getString("product_name") + "\t");
+                System.out.print("Price: " + filteredRs.getDouble("price") + "\n");
+            }
+
+            filteredRs.acceptChanges();
         } catch (Exception e) {
             e.printStackTrace();
         }
