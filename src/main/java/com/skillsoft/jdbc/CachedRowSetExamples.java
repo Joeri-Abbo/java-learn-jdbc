@@ -26,19 +26,45 @@ public class CachedRowSetExamples {
             con.setAutoCommit(false);
 
             CachedRowSet cachedRs = RowSetProvider.newFactory().createCachedRowSet();
+            cachedRs.setCommand("SELECT * FROM Products");
             cachedRs.execute(con);
 
-            System.out.println("-----Updating rows-----");
+//            while (cachedRs.next()) {
+//                if (cachedRs.getString("product_name").endsWith("Cable")) {
+//
+//                    displayProductData("Deleting: ", cachedRs);
+//                    cachedRs.deleteRow();
+//                }
+//            }
+
+            System.out.println("-----Inserting Rows-----\n");
+
+            int cableCount = 0;
+            int prodCount = 0;
 
             while (cachedRs.next()) {
+                prodCount = Math.max(cachedRs.getInt("product_id"), prodCount);
+
                 if (cachedRs.getString("product_name").endsWith("Cable")) {
-
-                    cachedRs.updateDouble("price", cachedRs.getDouble("price") + 1);
-                    cachedRs.updateRow();
-
-                    displayProductData("Updated: ", cachedRs);
+                    cableCount++;
                 }
             }
+
+            if (cableCount == 0) {
+                System.out.println("There are no cables in store! Adding one...");
+                Thread.sleep(60000);
+                cachedRs.moveToInsertRow();
+                cachedRs.updateInt("product_id", ++prodCount);
+                cachedRs.updateString("product_name", "HDMI Cable");
+                cachedRs.updateDouble("price", 5);
+
+                cachedRs.insertRow();
+                cachedRs.moveToCurrentRow();
+
+                displayProductData("added: ", cachedRs);
+
+            }
+
             cachedRs.acceptChanges();
             cachedRs.close();
         } catch (Exception e) {
