@@ -28,6 +28,12 @@ public class JoinRowSetExamples {
 
             JoinRowSet joinRs = RowSetProvider.newFactory().createJoinRowSet();
 
+            System.out.println("<<<< Supported Joins >>>>");
+            System.out.println("Inner join: " + joinRs.supportsInnerJoin());
+            System.out.println("Left join: " + joinRs.supportsLeftOuterJoin());
+            System.out.println("Right join: " + joinRs.supportsRightOuterJoin());
+            System.out.println("Cross join: " + joinRs.supportsCrossJoin());
+            System.out.println("Full join: " + joinRs.supportsFullJoin());
             joinRs.addRowSet(cachedRsProd, "product_id");
             joinRs.addRowSet(cachedRsProdBrand, "product_id");
 
