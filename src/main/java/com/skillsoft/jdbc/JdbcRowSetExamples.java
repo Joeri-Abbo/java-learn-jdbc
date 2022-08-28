@@ -25,23 +25,38 @@ public class JdbcRowSetExamples {
             JdbcRowSet jdbcRs = RowSetProvider.newFactory().createJdbcRowSet();
 
             jdbcRs.setCommand("SELECT * FROM Products");
-
             jdbcRs.setUrl(dbURL);
             jdbcRs.setUsername(username);
             jdbcRs.setPassword(password);
 
+            jdbcRs.setAutoCommit(false);
             jdbcRs.execute();
 
-            System.out.println("-----Navigating the JDBC RowSet-----");
+            System.out.println("-----Inserting rows-----");
+            int cableCount = 0;
+            int prodCount = 0;
+            while (jdbcRs.next()) {
 
-            jdbcRs.first();
-            displayProductData("First()", jdbcRs);
+                prodCount = Math.max(jdbcRs.getInt("product_id"), prodCount);
 
-            Thread.sleep(60000);
-            jdbcRs.last();
-            jdbcRs.refreshRow();
-            displayProductData("Last()", jdbcRs);
+                if (jdbcRs.getString("product_name").endsWith("Cable")) {
+                    cableCount++;
+                }
+            }
 
+            if (cableCount == 0) {
+                jdbcRs.moveToInsertRow();
+                jdbcRs.updateInt("product_id", ++prodCount);
+                jdbcRs.updateString("product_name", "HDMI Cable");
+                jdbcRs.updateDouble("price", 5);
+
+                jdbcRs.insertRow();
+                jdbcRs.last();
+
+                displayProductData("added: ", jdbcRs);
+            }
+
+            jdbcRs.commit();
             jdbcRs.close();
 
         } catch (Exception e) {
