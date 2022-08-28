@@ -19,35 +19,35 @@ public class JoinRowSetExamples {
 
             CachedRowSet cachedRsProd = RowSetProvider.newFactory().createCachedRowSet();
             CachedRowSet cachedRsProdBrand = RowSetProvider.newFactory().createCachedRowSet();
+            CachedRowSet cachedRsProdSub = RowSetProvider.newFactory().createCachedRowSet();
 
             cachedRsProd.setCommand("SELECT * FROM Products");
             cachedRsProdBrand.setCommand("SELECT * FROM ProductBrand");
+            cachedRsProdSub.setCommand("SELECT * FROM ProductSupplier");
 
             cachedRsProd.execute(con);
             cachedRsProdBrand.execute(con);
+            cachedRsProdSub.execute(con);
 
             JoinRowSet joinRs = RowSetProvider.newFactory().createJoinRowSet();
 
-            System.out.println("<<<< Supported Joins >>>>");
-            System.out.println("Inner join: " + joinRs.supportsInnerJoin());
-            System.out.println("Left join: " + joinRs.supportsLeftOuterJoin());
-            System.out.println("Right join: " + joinRs.supportsRightOuterJoin());
-            System.out.println("Cross join: " + joinRs.supportsCrossJoin());
-            System.out.println("Full join: " + joinRs.supportsFullJoin());
             joinRs.addRowSet(cachedRsProd, "product_id");
             joinRs.addRowSet(cachedRsProdBrand, "product_id");
+            joinRs.addRowSet(cachedRsProdSub, "product_id");
 
             System.out.println("------Products in stock------");
 
             while (joinRs.next()) {
                 System.out.print("Brand name: " + joinRs.getString("brand_name") + "\t");
                 System.out.print("Product name: " + joinRs.getString("product_name") + "\t");
+                System.out.print("Supplier name: " + joinRs.getString("supplier_name") + "\t");
                 System.out.print("Price: " + joinRs.getDouble("price") + "\n");
             }
 
             joinRs.close();
             cachedRsProd.close();
             cachedRsProdBrand.close();
+            cachedRsProdSub.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
