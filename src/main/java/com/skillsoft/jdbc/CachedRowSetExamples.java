@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import javax.sql.rowset.RowSetProvider;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.RowSet;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 public class CachedRowSetExamples {
     public static String dbURL = "jdbc:mysql://localhost:3306/SampleDB";
@@ -20,36 +22,24 @@ public class CachedRowSetExamples {
 
     public static void main(String[] args) throws SQLException {
 
-        try {
+        try (Connection con = DriverManager.getConnection(dbURL, username, password)) {
+            con.setAutoCommit(false);
+
             CachedRowSet cachedRs = RowSetProvider.newFactory().createCachedRowSet();
+            cachedRs.execute(con);
 
-            cachedRs.setCommand("SELECT * FROM Products");
-            cachedRs.setUrl(dbURL);
-            cachedRs.setUsername(username);
-            cachedRs.setPassword(password);
+            System.out.println("-----Updating rows-----");
 
-            cachedRs.execute();
+            while (cachedRs.next()) {
+                if (cachedRs.getString("product_name").endsWith("Cable")) {
 
-            System.out.println("-----Navigating the cached RowSet-----");
+                    cachedRs.updateDouble("price", cachedRs.getDouble("price") + 1);
+                    cachedRs.updateRow();
 
-            cachedRs.first();
-            displayProductData("First()", cachedRs);
-
-            cachedRs.relative(3);
-            displayProductData("Relative(3)", cachedRs);
-
-            cachedRs.previous();
-            displayProductData("Previous()", cachedRs);
-
-            cachedRs.absolute(6);
-            displayProductData("Absolute(6)", cachedRs);
-
-            cachedRs.last();
-            displayProductData("Last()", cachedRs);
-
-            cachedRs.relative(-5);
-            displayProductData("Relative(-5)", cachedRs);
-
+                    displayProductData("Updated: ", cachedRs);
+                }
+            }
+            cachedRs.acceptChanges();
             cachedRs.close();
         } catch (Exception e) {
             e.printStackTrace();
