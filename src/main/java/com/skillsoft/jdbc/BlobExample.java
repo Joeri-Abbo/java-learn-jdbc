@@ -16,11 +16,11 @@ public class BlobExample {
         PreparedStatement pstmt = null;
         try (Connection con = DriverManager.getConnection(dbURL, username, password)) {
 
-            String query = "UPDATE PuppyInfo SET puppy_photo =? WHERE puppy_Breed = 'Pug'";
+            String query = "UPDATE PuppyInfo SET puppy_photo =? WHERE puppy_Breed = 'Labrador'";
 
             pstmt = con.prepareStatement(query);
 
-            FileInputStream input = new FileInputStream("/Users/joeriabbo/Sites/java/learn-jdbc/pets/pug.jpg");
+            FileInputStream input = new FileInputStream("/Users/joeriabbo/Sites/java/learn-jdbc/pets/labrador.jpg");
 
             pstmt.setBlob(1, input);
             pstmt.executeUpdate();
