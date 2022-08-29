@@ -36,13 +36,20 @@ public class ClobExample {
 
                 String descFileName = dogDescFileMap.get(dogBreed);
 
-                FileReader inputFile = new FileReader("/Users/joeriabbo/Sites/java/learn-jdbc/pets/" + descFileName);
 
-                rs.updateClob("puppy_desc", inputFile);
+                Clob clob = rs.getClob("puppy_desc");
 
-                rs.updateRow();
-                System.out.println("Added description for " + dogBreed + " from " + descFileName);
-                inputFile.close();
+                Reader r = clob.getCharacterStream();
+
+                FileWriter writer = new FileWriter(descFileName);
+
+                int i;
+                while ((i = r.read()) != -1) {
+                    writer.write(i);
+                }
+                writer.close();
+                r.close();
+                System.out.println("Saved description in: " + descFileName);
             }
             rs.close();
         } catch (IOException | SQLException e) {
