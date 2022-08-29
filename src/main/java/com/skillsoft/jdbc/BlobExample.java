@@ -16,13 +16,14 @@ public class BlobExample {
         PreparedStatement pstmt = null;
         try (Connection con = DriverManager.getConnection(dbURL, username, password)) {
 
-            String query = "UPDATE PuppyInfo SET puppy_photo =? WHERE puppy_Breed = 'Labrador'";
-
+            String query = "INSERT INTO PuppyInfo (puppy_id, puppy_breed,puppy_photo) values(?,?,?)";
             pstmt = con.prepareStatement(query);
 
-            FileInputStream input = new FileInputStream("/Users/joeriabbo/Sites/java/learn-jdbc/pets/labrador.jpg");
+            pstmt.setInt(1,100);
+            pstmt.setString(2,"American Eskimo");
+            FileInputStream input = new FileInputStream("/Users/joeriabbo/Sites/java/learn-jdbc/pets/american_eskimo.jpeg");
 
-            pstmt.setBlob(1, input);
+            pstmt.setBlob(3, input);
             pstmt.executeUpdate();
             System.out.println("The image upload was a success!");
         } catch (SQLException e) {
