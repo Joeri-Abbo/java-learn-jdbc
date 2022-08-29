@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 
 public class StoredProcedureExample {
     public static String dbURL = "jdbc:mysql://localhost:3306/UniversityDB";
@@ -13,28 +14,23 @@ public class StoredProcedureExample {
 
     public static void main(String[] args) throws SQLException {
 
-        try {
-            Connection con = DriverManager.getConnection(dbURL, username, password);
+        try (Connection con = DriverManager.getConnection(dbURL, username, password)) {
 
-            Statement stmt = con.createStatement();
 
-            String queryDrop = "DROP PROCEDURE IF EXISTS Select_Student";
-            String querySelect = """
-                    CREATE PROCEDURE Select_Student
-                    (IN stud_id INT, OUT student_name VARCHAR(255), OUT sdept_id INT)
-                    BEGIN
-                    SELECT s.stud_name, sd.dept_id INTO student_name, sdept_id 
-                    FROM Student s, StudentDepartment sd
-                    WHERE s.stud_id = student_id
-                    AND sd.stud_id = student_id;
-                    END 
-                    """;
+            CallableStatement cs = con.prepareCall("{call SelectStudent(?, ?, ?)}");
 
-            stmt.execute(queryDrop);
-            stmt.execute(querySelect);
-            stmt.close();
-            System.out.println("Stored procedure created successfully!");
+            cs.setInt(1, 102);
 
+            cs.registerOutParameter(2, Types.VARCHAR);
+            cs.registerOutParameter(3, Types.INTEGER);
+
+            cs.execute();
+
+
+            System.out.println("Student Name = " + cs.getString(2));
+            System.out.println("Student Department_ID = " + cs.getInt(3));
+
+            cs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
