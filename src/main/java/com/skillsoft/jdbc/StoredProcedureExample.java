@@ -1,9 +1,6 @@
 package com.skillsoft.jdbc;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class StoredProcedureExample {
     public static String dbURL = "jdbc:mysql://localhost:3306/UniversityDB";
@@ -12,35 +9,19 @@ public class StoredProcedureExample {
 
     public static void main(String[] args) throws SQLException {
 
-        try (Connection con = DriverManager.getConnection(dbURL, username, password)) {
-            Statement stmt = con.createStatement();
+        try {
+            Connection con = DriverManager.getConnection(dbURL, username, password);
 
-            String queryDrop = "DROP PROCEDURE IF EXISTS Update_Student";
+            CallableStatement cs = con.prepareCall("{call update_student(?,?)}");
 
-            String queryUpdate = """
-                    CREATE PROCEDURE update_student
-                    (IN student_id INT, INOUT student_email VARCHAR(255))
-                    BEGIN
-                    DECLARE temp_email VARCHAR(255);
-                                        
-                    SELECT email INTO temp_email
-                    FROM Student
-                    WHERE stud_id = student_id;
-                                        
-                    UPDATE Student SET email = student_email
-                    WHERE stud_id = student_id;
-                    SET student_email = temp_email;
-                                        
-                    END
-                                        
-                    """;
+            cs.setInt(1, 102);
 
-            stmt.execute(queryDrop);
-            stmt.execute(queryUpdate);
+            cs.setString(2, "Claudia.Sand@loonycorn.com");
+            cs.registerOutParameter(2, Types.VARCHAR);
+            cs.execute();
 
-            stmt.close();
-
-            System.out.println("Stored procedure created successfully!");
+            System.out.println("The old email ID = " +cs.getString(2));
+            cs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
